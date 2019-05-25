@@ -44,10 +44,10 @@ class ViewController: UIViewController {
            
             if error != nil {
                 print("Getting Session Error")
-                print(error!)
+                print(error!.localizedDescription)
                 DispatchQueue.main.async {
                     indicator.stopAnimating()
-                    self.showAlert(title: "Login Failed", message: "Wrong Email or Password")
+                    self.showAlert(title: "Login Failed", message: error!.localizedDescription)
                 }
                 return
             }
@@ -61,9 +61,10 @@ class ViewController: UIViewController {
                 if error != nil {
                     DispatchQueue.main.async {
                         indicator.stopAnimating()
+                        self.showAlert(title: "Error", message: error!.localizedDescription)
                     }
                     print("Getting User Error")
-                    print(error!)
+                    print(error!.localizedDescription)
                     return
                 }
                 guard let response = response else {

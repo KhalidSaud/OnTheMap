@@ -30,12 +30,36 @@ extension UIViewController {
         alertVC.addAction(alertAction)
         present(alertVC, animated: true, completion: nil)
     }
+    
+    func showAlertChoice(title: String, message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "Ok", style: .default) { (alert) in
+            self.toFind()
+        }
+        let cancel = UIAlertAction(title: "Cencel", style: .cancel, handler: nil)
+        alertVC.addAction(alertAction)
+        alertVC.addAction(cancel)
+        present(alertVC, animated: true, completion: nil)
+    }
+    
 }
 
 extension UIViewController {
     
     func toFind() {
         performSegue(withIdentifier: "ToFind", sender: nil)
+    }
+    
+    func checkIfHasPost(students: [Student]) {
+        
+        let postId = UserData.postId
+        UserData.hasPost = false
+        for student in students {
+            if student.objectID == postId {
+                UserData.hasPost = true
+            }
+        }
+        print(UserData.hasPost)
     }
     
     func logOut() {

@@ -20,16 +20,28 @@ class MapVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureLocationServices()
+        
 //        students = GetDummyData()
         
+//        getStudentsData()
+        
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        getStudentsData()
+    }
+    
+    func getStudentsData() {
         let indicator = self.startAnActivityIndicator()
-//        indicator.startAnimating()
+        //        indicator.startAnimating()
         API.GetAllStudentsFromAPI { (data, error) in
             
             if let data = data {
                 DispatchQueue.main.async {
                     indicator.stopAnimating()
                     self.students = data.studentsResult
+                    self.checkIfHasPost(students: self.students)
                     self.StudentsSetup()
                     self.setup()
                 }
@@ -37,9 +49,10 @@ class MapVC: UIViewController {
             }
             if let error = error {
                 DispatchQueue.main.async {
+                    self.showAlert(title: "Error", message: error.localizedDescription)
                     indicator.stopAnimating()
                 }
-                print(error)
+                print(error.localizedDescription)
             }
         }
     }
@@ -56,8 +69,18 @@ class MapVC: UIViewController {
     }
     
     @IBAction func addButtonPressed(_ sender: Any) {
-        toFind()
+        if UserData.hasPost {
+            showAlertChoice(title: "Notice", message: "Do you want to overwrite your previous location ?")
+        } else {
+            toFind()
+        }
+        
     }
+    
+    @IBAction func refreshButtonPressed(_ sender: Any) {
+        getStudentsData()
+    }
+    
     
     @IBAction func logoutButtonPressed(_ sender: Any) {
         logOut()

@@ -12,4 +12,6 @@ struct UserData {
     static var userId: String = ""
     static var firstName: String = ""
     static var lastName: String = ""
+    static var postId: String = ""
+    static var hasPost: Bool = false
 }

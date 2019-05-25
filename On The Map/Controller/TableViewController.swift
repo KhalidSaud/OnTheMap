@@ -23,12 +23,24 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
 //        students = GetDummyData()
         
-        getStudents()
+//        getStudents()
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        getStudents()
+    }
+    
     @IBAction func addButtonPressed(_ sender: Any) {
-        toFind()
+        if UserData.hasPost {
+            showAlertChoice(title: "Notice", message: "Do you want to overwrite your previous location ?")
+        } else {
+            toFind()
+        }
+    }
+    
+    @IBAction func refreshButtonPressed(_ sender: Any) {
+        getStudents()
     }
     
     func getStudents() {
@@ -38,6 +50,7 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
             
             if let data = data {
                 self.students = data.studentsResult
+                self.checkIfHasPost(students: self.students)
                 DispatchQueue.main.async {
                     indicator.stopAnimating()
                     self.tableView.reloadData()
@@ -75,6 +88,6 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     @IBAction func logtouTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        logOut()
     }
 }

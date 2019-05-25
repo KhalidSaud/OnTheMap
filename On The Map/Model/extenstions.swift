@@ -48,13 +48,17 @@ extension UIViewController {
             guard let response = response else {
                 print("log out not success")
                 print(error!)
-                self.dismiss(animated: true, completion: nil)
+                DispatchQueue.main.async {
+                    self.dismiss(animated: true, completion: nil)
+                }
                 return
             }
             
             print("log out success")
             print(response)
-            self.dismiss(animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self.dismiss(animated: true, completion: nil)
+            }
             
         }
     }

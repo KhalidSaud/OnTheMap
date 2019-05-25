@@ -9,12 +9,13 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
 
 
@@ -35,11 +36,17 @@ class ViewController: UIViewController {
     }
     
     func login(email: String, password: String) {
+        
+        let indicator = startAnActivityIndicator()
+        indicator.startAnimating()
+        
         API.GetSession(email: email, password: password) { (response, error) in
            
             if error != nil {
+                print("Getting Session Error")
                 print(error!)
                 DispatchQueue.main.async {
+                    indicator.stopAnimating()
                     self.showAlert(title: "Login Failed", message: "Wrong Email or Password")
                 }
                 return
@@ -52,6 +59,10 @@ class ViewController: UIViewController {
             
             API.getUserData(userKey: UserData.userId, completion: { (response, error) in
                 if error != nil {
+                    DispatchQueue.main.async {
+                        indicator.stopAnimating()
+                    }
+                    print("Getting User Error")
                     print(error!)
                     return
                 }
@@ -63,6 +74,7 @@ class ViewController: UIViewController {
                 UserData.lastName = response.lastName
                 
                 DispatchQueue.main.async {
+                    indicator.stopAnimating()
                     self.performSegue(withIdentifier: "ToMainScreen", sender: nil)
                 }
                 

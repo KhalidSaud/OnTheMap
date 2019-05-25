@@ -32,17 +32,22 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func getStudents() {
-//        let ai = startAnActivityIndicator()
+        let indicator = startAnActivityIndicator()
+        indicator.startAnimating()
         API.GetAllStudentsFromAPI { (data, error) in
             
             if let data = data {
                 self.students = data.studentsResult
                 DispatchQueue.main.async {
+                    indicator.stopAnimating()
                     self.tableView.reloadData()
                 }
                 print("list has students")
             }
-            if let error = error {
+            if error != nil {
+                DispatchQueue.main.async {
+                    indicator.stopAnimating()
+                }
                 print("list has no students")
             }
         }

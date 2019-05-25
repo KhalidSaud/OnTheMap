@@ -21,12 +21,24 @@ class MapVC: UIViewController {
         super.viewDidLoad()
         configureLocationServices()
 //        students = GetDummyData()
+        
+        let indicator = self.startAnActivityIndicator()
+//        indicator.startAnimating()
         API.GetAllStudentsFromAPI { (data, error) in
+            
             if let data = data {
-                self.students = data.studentsResult
-                self.StudentsSetup()
+                DispatchQueue.main.async {
+                    indicator.stopAnimating()
+                    self.students = data.studentsResult
+                    self.StudentsSetup()
+                    self.setup()
+                }
+                
             }
             if let error = error {
+                DispatchQueue.main.async {
+                    indicator.stopAnimating()
+                }
                 print(error)
             }
         }

@@ -49,7 +49,7 @@ class FindLocationViewController: UIViewController {
             if error != nil {
                 print(error!.localizedDescription)
                 DispatchQueue.main.async {
-                    indicator.startAnimating()
+                    indicator.stopAnimating()
                     self.showAlert(title: "Error", message: error!.localizedDescription)
                 }
                 return
@@ -64,7 +64,7 @@ class FindLocationViewController: UIViewController {
                 if let location = placemark.location {
                     let coordinate = location.coordinate
                     DispatchQueue.main.async {
-                        indicator.startAnimating()
+                        indicator.stopAnimating()
                     }
                     self.savedLocation = coordinate
                     print("address for: \(address), lat: \(coordinate.latitude), long: \(coordinate.longitude)")

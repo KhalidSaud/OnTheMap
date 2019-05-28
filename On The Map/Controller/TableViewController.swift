@@ -58,10 +58,11 @@ class TableViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 print("list has students")
             }
             if error != nil {
+                print("list has no students")
                 DispatchQueue.main.async {
                     indicator.stopAnimating()
+                    self.logOut()
                 }
-                print("list has no students")
             }
         }
     }

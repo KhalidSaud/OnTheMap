@@ -21,7 +21,7 @@ class ViewController: UIViewController {
 
     @IBAction func loginButtonPressed(_ sender: Any) {
         
-        if (email.text != "" || email.text != nil) && (password.text != "" || password.text != nil) {
+        if (email.text != "" || email.text?.isEmpty == false) && (password.text != "" || password.text?.isEmpty == false) {
             login(email: email.text!, password: password.text!)
         } else {
             showAlert(title: "Login Failed", message: "Please fill your email and password")

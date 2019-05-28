@@ -35,7 +35,7 @@ class API{
                 return
             }
             
-            if httpStatusCode >= 200 && httpStatusCode < 300 {
+            if httpStatusCode >= 200 && httpStatusCode < 300 || httpStatusCode == 403 {
                 
                 guard let data = data else {
                     print("no data")
@@ -56,16 +56,8 @@ class API{
                 }
                 
             } else {
-                switch httpStatusCode {
-                    case 400:print("Bad Request")
-                    case 401:print("Invalid Credentials")
-                    case 402:print("Unauthorized")
-                    case 405:print("HttpMethod Not Allowed")
-                    case 410:print("URL Changed")
-                    case 500:print("Server Error")
-                    default: print("Something is wrong.")
-                }
-                completion(nil, error)
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
         }
         task.resume()
@@ -81,24 +73,40 @@ class API{
                 return
             }
             
-            guard let data = data else {
-                print("no data")
+            guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode else {
+                
+                print("no status code")
                 completion(nil, error)
                 return
             }
             
-            do {
-                //                print(String(data: data, encoding: .utf8)!)
-                let newData = data.dropFirst(5)
-                let responseObject = try JSONDecoder().decode(UdacityGETResponse.self, from: newData)
-                print("user result is here")
-                completion(responseObject, nil)
-            } catch {
-                print("no result")
-                print(error)
-                completion(nil, error)
-                return
+            if httpStatusCode >= 200 && httpStatusCode < 300 {
+                
+                guard let data = data else {
+                    print("no data")
+                    completion(nil, error)
+                    return
+                }
+                
+                do {
+                    let newData = data.dropFirst(5)
+                    let responseObject = try JSONDecoder().decode(UdacityGETResponse.self, from: newData)
+                    print("user result is here")
+//                    print(String(data: data, encoding: .utf8))
+                    completion(responseObject, nil)
+                } catch {
+                    print("no result")
+                    print(error)
+                    completion(nil, error)
+                    return
+                }
+                
+                
+            } else {
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
+            
             
         }
         task.resume()
@@ -123,23 +131,36 @@ class API{
                 return
             }
             
-            guard let data = data else {
-                print("no data")
+            guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode else {
+                
+                print("no status code")
                 completion(nil, error)
                 return
             }
             
-            do {
-                //                print(String(data: data, encoding: .utf8)!)
-                let newData = data.dropFirst(5)
-                let responseObject = try JSONDecoder().decode(UdacityDELETESessionResponse.self, from: newData)
-                print("session deleted")
-                completion(responseObject, nil)
-            } catch {
-                print("no result")
-                print(error)
-                completion(nil, error)
-                return
+            if httpStatusCode >= 200 && httpStatusCode < 300 {
+                
+                guard let data = data else {
+                    print("no data")
+                    completion(nil, error)
+                    return
+                }
+                
+                do {
+                    let newData = data.dropFirst(5)
+                    let responseObject = try JSONDecoder().decode(UdacityDELETESessionResponse.self, from: newData)
+                    print("session deleted")
+                    completion(responseObject, nil)
+                } catch {
+                    print("no result")
+                    print(error)
+                    completion(nil, error)
+                    return
+                }
+                
+            } else {
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
             
         }
@@ -151,22 +172,36 @@ class API{
         let request = URLRequest(url: URL(string: "https://onthemap-api.udacity.com/v1/StudentLocation?limit=100&order=-updatedAt")!)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             
-            guard let data = data else {
-                print("no data")
+            guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode else {
+                
+                print("no status code")
                 completion(nil, error)
                 return
             }
             
-            do {
+            if httpStatusCode >= 200 && httpStatusCode < 300 {
                 
-                let responseObject = try JSONDecoder().decode(StudentGETResponse.self, from: data)
-                print("students result is here")
-                completion(responseObject, nil)
-            } catch {
-                print("no result")
-                print(error)
-                completion(nil, error)
-                return
+                guard let data = data else {
+                    print("no data")
+                    completion(nil, error)
+                    return
+                }
+                
+                do {
+                    
+                    let responseObject = try JSONDecoder().decode(StudentGETResponse.self, from: data)
+                    print("students result is here")
+                    completion(responseObject, nil)
+                } catch {
+                    print("no result")
+                    print(error)
+                    completion(nil, error)
+                    return
+                }
+                
+            } else {
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
             
         }
@@ -181,25 +216,42 @@ class API{
         request.httpBody = "{\"uniqueKey\": \"\(userId)\", \"firstName\": \"\(firstName)\", \"lastName\": \"\(lastName)\",\"mapString\": \"\(city)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(location.latitude), \"longitude\": \(location.longitude)}".data(using: .utf8)
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data else {
-                print(error!.localizedDescription)
+            
+            
+            guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode else {
+                
+                print("no status code")
                 completion(nil, error)
                 return
             }
             
-            do {
+            if httpStatusCode >= 200 && httpStatusCode < 300 {
                 
-                let responseObject = try JSONDecoder().decode(StudentPOSTResponse.self, from: data)
-                print("post result is here")
-                print(userId)
-                print(String(data: data, encoding: .utf8)!)
-                completion(responseObject, nil)
-            } catch {
-                print("no result")
-                print(error.localizedDescription)
-                completion(nil, error)
-                return
+                guard let data = data else {
+                    print("no data")
+                    completion(nil, error)
+                    return
+                }
+                
+                do {
+                    
+                    let responseObject = try JSONDecoder().decode(StudentPOSTResponse.self, from: data)
+                    print("post result is here")
+                    print(userId)
+                    print(String(data: data, encoding: .utf8)!)
+                    completion(responseObject, nil)
+                } catch {
+                    print("no result")
+                    print(error.localizedDescription)
+                    completion(nil, error)
+                    return
+                }
+                
+            } else {
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
+            
         }
         task.resume()
     }
@@ -213,26 +265,107 @@ class API{
         request.httpBody = "{\"uniqueKey\": \"\(userId)\", \"firstName\": \"\(firstName)\", \"lastName\": \"\(lastName)\",\"mapString\": \"\(city)\", \"mediaURL\": \"\(mediaURL)\",\"latitude\": \(location.latitude), \"longitude\": \(location.longitude)}".data(using: .utf8)
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data else {
-                print("no data")
-                print(error!.localizedDescription)
+            
+            guard let httpStatusCode = (response as? HTTPURLResponse)?.statusCode else {
+                
+                print("no status code")
                 completion(nil, error)
                 return
             }
             
-            do {
-                print("put result is here")
-                print(String(data: data, encoding: .utf8)!)
-                let responseObject = try JSONDecoder().decode(StudentPUTResponse.self, from: data)
-                completion(responseObject, nil)
-            } catch {
-                print("no result")
-                print(error.localizedDescription)
-                completion(nil, error)
-                return
+            if httpStatusCode >= 200 && httpStatusCode < 300 {
+                
+                guard let data = data else {
+                    print("no data")
+                    completion(nil, error)
+                    return
+                }
+                
+                do {
+                    print("put result is here")
+                    print(String(data: data, encoding: .utf8)!)
+                    let responseObject = try JSONDecoder().decode(StudentPUTResponse.self, from: data)
+                    completion(responseObject, nil)
+                } catch {
+                    print("no result")
+                    print(error.localizedDescription)
+                    completion(nil, error)
+                    return
+                }
+                
+            } else {
+                let statusCodeError = self.checkStatusCode(statusCode: httpStatusCode)
+                completion(nil, statusCodeError)
             }
+            
+            
         }
         task.resume()
     }
     
+    class func checkStatusCode(statusCode: Int) -> Error {
+        
+        print(statusCode)
+        
+        switch statusCode {
+        case 400:
+            print("Bad Request")
+            return self.getErrorMessage(message: "Bad Request", statusCode: 400)!
+        case 401:
+            print("Invalid Credentials")
+            return self.getErrorMessage(message: "Invalid Credentials", statusCode: 400)!
+        case 402:
+            print("Unauthorized")
+            return self.getErrorMessage(message: "Unauthorized", statusCode: 400)!
+        case 405:
+            print("HttpMethod Not Allowed")
+            return self.getErrorMessage(message: "HttpMethod Not Allowed", statusCode: 400)!
+        case 410:
+            print("URL Changed")
+            return self.getErrorMessage(message: "URL Changed", statusCode: 400)!
+        case 500:
+            print("Server Error")
+            return self.getErrorMessage(message: "Server Error", statusCode: 400)!
+        default:
+            print("Something is wrong.")
+            return self.getErrorMessage(message: "Bad Request", statusCode: 400)!
+        }
+        
+    }
+    
+    class func getErrorMessage(message: String, statusCode: Int) -> NSError? {
+        let errorInfo = [NSLocalizedDescriptionKey: message]
+        let errorObj = NSError(domain: "Error", code: statusCode, userInfo: errorInfo)
+        return errorObj
+    }
 }
+
+
+
+
+
+// For refrence
+
+//        switch httpStatusCode {
+//        case 400:
+//            print("Bad Request")
+//            completion(nil, self.getErrorMessage(message: "Bad Request", statusCode: 400))
+//        case 401:
+//            print("Invalid Credentials")
+//            completion(nil, self.getErrorMessage(message: "Invalid Credentials", statusCode: 400))
+//        case 402:
+//            print("Unauthorized")
+//            completion(nil, self.getErrorMessage(message: "Unauthorized", statusCode: 400))
+//        case 405:
+//            print("HttpMethod Not Allowed")
+//            completion(nil, self.getErrorMessage(message: "HttpMethod Not Allowed", statusCode: 400))
+//        case 410:
+//            print("URL Changed")
+//            completion(nil, self.getErrorMessage(message: "URL Changed", statusCode: 400))
+//        case 500:
+//            print("Server Error")
+//            completion(nil, self.getErrorMessage(message: "Server Error", statusCode: 400))
+//        default:
+//            print("Something is wrong.")
+//            completion(nil, self.getErrorMessage(message: "Bad Request", statusCode: 400))
+//        }

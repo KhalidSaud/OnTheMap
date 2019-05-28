@@ -34,7 +34,7 @@ class MapVC: UIViewController {
     
     func getStudentsData() {
         let indicator = self.startAnActivityIndicator()
-        //        indicator.startAnimating()
+        indicator.startAnimating()
         API.GetAllStudentsFromAPI { (data, error) in
             
             if let data = data {
@@ -51,8 +51,8 @@ class MapVC: UIViewController {
                 DispatchQueue.main.async {
                     self.showAlert(title: "Error", message: error.localizedDescription)
                     indicator.stopAnimating()
+                    self.logOut()
                 }
-                print(error.localizedDescription)
             }
         }
     }
